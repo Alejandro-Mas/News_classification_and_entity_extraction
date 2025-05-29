@@ -1,0 +1,31 @@
+# Python
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+**/.ipynb_checkpoints/
+
+# Env
+.env
+.venv/
+venv/
+
+# Data
+data_ingestion/data/*.csv
+data_ingestion/data/*.tsv
+
+# MLflow
+mlruns/
+mlruns.db
+
+# Docker
+*.log
+*.pid
+.airflow/
+
+# Jupyter
+**/.ipynb_checkpoints/
+
+# Otros
+*.zip
+*.tar.gz
