@@ -11,8 +11,8 @@
 venv/
 
 # Data
-data_ingestion/data/*.csv
-data_ingestion/data/*.tsv
+*.csv
+*.tsv
 
 # MLflow
 mlruns/
@@ -21,7 +21,7 @@ mlruns.db
 # Docker
 *.log
 *.pid
-.airflow/
+*.cfg
 
 # Jupyter
 **/.ipynb_checkpoints/
