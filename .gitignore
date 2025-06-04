@@ -29,3 +29,6 @@ mlruns.db
 # Otros
 *.zip
 *.tar.gz
+
+#Modelos
+modeling/bertopic/artifacts/

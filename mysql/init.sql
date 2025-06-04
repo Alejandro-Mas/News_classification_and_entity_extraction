@@ -10,3 +10,12 @@ CREATE TABLE IF NOT EXISTS news (
     publish_date DATETIME,
     processed BOOLEAN DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS topics_entities (
+    news_id INT PRIMARY KEY,
+    topic INT,
+    persons TEXT,
+    organizations TEXT,
+    locations TEXT,
+    FOREIGN KEY (news_id) REFERENCES news(id)
+);

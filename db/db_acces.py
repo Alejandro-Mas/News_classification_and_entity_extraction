@@ -16,15 +16,3 @@ def get_db_uri():
 def get_engine() :
     db_uri = get_db_uri()
     return create_engine(db_uri)
-
-def test_connection():
-    try:
-        engine = get_engine()
-        with engine.connect() as connection:
-            result = connection.execute(text("SELECT 1"))
-            print("✅ Conexión exitosa:", result.scalar())
-    except Exception as e:
-        print("❌ Error al conectar:", e)
-
-if __name__ == "__main__":
-    test_connection()

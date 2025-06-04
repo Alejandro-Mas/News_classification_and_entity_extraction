@@ -37,23 +37,6 @@ services:
     networks:
       - nlp_net
 
-  pipeline_app:
-    build: ./pipeline
-    container_name: pipeline_app
-    environment:
-      MYSQL_HOST: ${MYSQL_HOST}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_PORT: ${MYSQL_PORT}
-    depends_on:
-      - mysql
-      - mlflow
-    volumes:
-      - .:/app
-    networks:
-      - nlp_net
-
   postgres:
     image: postgres:13
     environment:
@@ -71,7 +54,10 @@ services:
       - nlp_net
 
   airflow-webserver:
-    image: apache/airflow:2.8.1
+    image: custom-airflow:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.af
     depends_on:
       - postgres
       - redis
@@ -84,8 +70,11 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__WEBSERVER__DEFAULT_USER: airflow
       AIRFLOW__WEBSERVER__DEFAULT_PASSWORD: airflow
+      PYTHONPATH: /app
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - .:/app
     ports:
       - "8081:8080"
     command: webserver
@@ -93,7 +82,7 @@ services:
       - nlp_net
 
   airflow-scheduler:
-    image: apache/airflow:2.8.1
+    image: custom-airflow:latest
     depends_on:
       - airflow-webserver
     environment:
@@ -101,14 +90,17 @@ services:
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      PYTHONPATH: /app
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - .:/app
     command: scheduler
     networks:
       - nlp_net
 
   airflow-worker:
-    image: apache/airflow:2.8.1
+    image: custom-airflow:latest
     depends_on:
       - airflow-webserver
     environment:
@@ -116,8 +108,11 @@ services:
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      PYTHONPATH: /app
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - .:/app
     command: celery worker
     networks:
       - nlp_net
