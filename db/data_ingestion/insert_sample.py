@@ -1,10 +1,10 @@
 import os
 from sqlalchemy import text
-from pipeline.main import get_engine
+from db.db_acces import get_engine
 
 def insert_sample():
     engine = get_engine()
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         conn.execute(text("""
             INSERT INTO news (title, content, font, processed)
             VALUES (:title, :content, :font, :processed) """), 
@@ -14,8 +14,7 @@ def insert_sample():
             "font": "prueba",
             "processed": 0
         })
-        conn.commit()
-        print("✅ Inserción de prueba exitosa.")
+        print("Inserción de prueba exitosa.")
 
 if __name__ == "__main__":
     insert_sample()

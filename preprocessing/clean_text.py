@@ -9,9 +9,9 @@ def clean_text_for_ner(text):
     Limpia el texto eliminando URLs y caracteres especiales innecesarios,
     manteniendo las mayúsculas para el NER.
     """
-    text = re.sub(r'http\S+', '', text)  # Elimina URLs
-    text = re.sub(r'[^a-zA-Z\s.,!?"\'()]', '', text) # Mantiene letras, espacios y signos de puntuación comunes
-    text = re.sub(r'@\s*@\s*@\s*@\s*', '', text) # Elimina secuencias de @ repetidas con espacios opcionales
+    text = re.sub(r'http\S+', '', text)
+    text = re.sub(r'[^a-zA-Z\s.,!?"\'()]', '', text)
+    text = re.sub(r'@\s*@\s*@\s*@\s*', '', text)
     return text
 
 def remove_stopwords(text):
@@ -29,7 +29,6 @@ def clean_news_items(news_items):
 
         cleaned.append({
             'id': item['id'],
-            'cleaned_text': cleaned_text,
-            'font': item['font'],
+            'cleaned_text': cleaned_text
         })
     return cleaned

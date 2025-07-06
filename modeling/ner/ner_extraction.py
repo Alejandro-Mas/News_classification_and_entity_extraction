@@ -1,16 +1,17 @@
-from typing import List
 import spacy
+import logging
+from typing import List
 
-def extract_entities(text: str, nlp_model) -> tuple:
+def extract_entities(text: str, ner_model) -> tuple:
     """
     Extrae personas, organizaciones sobre text
     """
-    doc = nlp_model(text)
+    ner = ner_model(text)
     persons = set()
     organizations = set()
     locations = set()
 
-    for ent in doc.ents:
+    for ent in ner.ents:
         if ent.label_ == "PERSON":
             persons.add(ent.text)
         elif ent.label_ == "ORG":
@@ -21,15 +22,16 @@ def extract_entities(text: str, nlp_model) -> tuple:
     return list(persons), list(organizations), list(locations)
 
 
-def extract_entities_batch(news_items: List[dict], nlp_model) -> List[dict]:
+def extract_entities_batch(news_items: List[dict]) -> List[dict]:
+    ner_model = spacy.load("en_core_web_sm")
     """
     Procesa una lista de documentos con texto limpio y devuelve los resultados con entidades.
-    Espera: [{"id": ..., "cleaned_text": ..., "font": ...}]
+    Espera: [{"id": ..., "cleaned_text": ...]
     Devuelve: [{"id": ..., "persons": [...], "organizations": [...], "locations": [...]}]
     """
     results = []
     for item in news_items:
-        persons, orgs, locs = extract_entities(item["cleaned_text"], nlp_model)
+        persons, orgs, locs = extract_entities(item["cleaned_text"], ner_model)
         results.append({
             "id": item["id"],
             "persons": persons,

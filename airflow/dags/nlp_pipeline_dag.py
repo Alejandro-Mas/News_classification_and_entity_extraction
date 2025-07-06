@@ -1,7 +1,7 @@
-import spacy
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
+from airflow.exceptions import AirflowSkipException
 
 from db.db_acces import get_engine
 
@@ -9,7 +9,7 @@ from db.data_ingestion.select_news import get_unprocessed_news
 
 from preprocessing.clean_text import clean_news_items
 
-from modeling.bertopic.inference_bertopic import inference_bertopic, load_model
+from modeling.bertopic.inference_bertopic import inference_bertopic
 from persistence.persist_inference import persist_topics
 
 from modeling.ner.ner_extraction import extract_entities_batch
@@ -33,7 +33,8 @@ with DAG(
     def fetch_news(**kwargs):
         news = get_unprocessed_news()
         if not news:
-            print("No hay noticias nuevas.")
+            logging.info("No hay noticias nuevas que procesar. Termina la tarea.")
+            raise AirflowSkipException("No hay noticias nuevas para procesar.")
         kwargs['ti'].xcom_push(key='raw_news', value=news)
 
     def clean_text(**kwargs):
@@ -43,8 +44,7 @@ with DAG(
 
     def run_inference(**kwargs):
         cleaned_news = kwargs['ti'].xcom_pull(task_ids='clean_text', key='cleaned_news')
-        model = load_model()  # ✅ cargado una sola vez por batch, (ampliacion -> dejar el modelo levantado en un endpoint para inferencia)
-        results = inference_bertopic(cleaned_news, model)
+        results = inference_bertopic(cleaned_news)
         kwargs['ti'].xcom_push(key='topic_results', value=results)
 
     def persist_results(**kwargs):
@@ -53,8 +53,8 @@ with DAG(
 
     def extract_ner(**kwargs):
         cleaned_news = kwargs['ti'].xcom_pull(task_ids='clean_text', key='cleaned_news')
-        nlp_model = spacy.load("en_core_web_sm")  # ✅ cargado una vez
-        ner_results = extract_entities_batch(cleaned_news, nlp_model)
+        topic_results = kwargs['ti'].xcom_pull(task_ids='inference_bertopic', key='topic_results')
+        ner_results = extract_entities_batch(cleaned_news)
         kwargs['ti'].xcom_push(key='ner_results', value=ner_results)
 
     def persist_ner(**kwargs):

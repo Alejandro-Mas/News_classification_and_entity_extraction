@@ -2,7 +2,6 @@ FROM apache/airflow:2.8.1-python3.9
 
 COPY requirements.txt /requirements.txt
 
-# Habilitar compilación de paquetes como blis/spacy
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -13,10 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && chown -R airflow /usr/local/share/nltk_data \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Ahora sí, cambiar a airflow y continuar
 USER airflow
 COPY requirements.txt /requirements.txt
 RUN pip install --no-cache-dir -r /requirements.txt
 RUN python -m nltk.downloader -d /usr/local/share/nltk_data stopwords wordnet omw-1.4 punkt averaged_perceptron_tagger && \
     python -m spacy download en_core_web_sm
+
 ENV NLTK_DATA=/usr/local/share/nltk_data

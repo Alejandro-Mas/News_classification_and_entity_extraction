@@ -3,6 +3,7 @@ services:
     image: mysql:8.0
     container_name: mysql
     environment:
+      MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -70,6 +71,14 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__WEBSERVER__DEFAULT_USER: airflow
       AIRFLOW__WEBSERVER__DEFAULT_PASSWORD: airflow
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MODEL_ENDPOINT_URL: ${MODEL_ENDPOINT_URL}
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
       PYTHONPATH: /app
     volumes:
       - ./airflow/dags:/opt/airflow/dags
@@ -90,6 +99,14 @@ services:
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MODEL_ENDPOINT_URL: ${MODEL_ENDPOINT_URL}
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
       PYTHONPATH: /app
     volumes:
       - ./airflow/dags:/opt/airflow/dags
@@ -108,6 +125,14 @@ services:
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MODEL_ENDPOINT_URL: ${MODEL_ENDPOINT_URL}
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
       PYTHONPATH: /app
     volumes:
       - ./airflow/dags:/opt/airflow/dags
